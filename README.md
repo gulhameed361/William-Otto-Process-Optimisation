@@ -1,2 +1,2 @@
-# William-Otto-Process-Optimisation
-NLP solvers are required to solve this optimisation problem.
+# William-Otto-Process Optimisation
+An NLP solver (like IPOPT or CONOT) is required to solve this optimisation problem.
