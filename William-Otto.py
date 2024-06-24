@@ -2,6 +2,9 @@
 """
 Created on Tue Jun 18 14:58:16 2024
 
+Details of the process can be found in the following book.
+Biegler, L.T., 2010. Nonlinear programming: concepts, algorithms, and applications to chemical processes. Society for Industrial and Applied Mathematics.
+
 @author: gh00616
 """
 
@@ -29,18 +32,13 @@ m.Fp = Var(bounds=(0,4.763), initialize = 0.5)
 m.Fpurge = Var(bounds=(0, None), initialize=0)
 m.Fg = Var(bounds=(0, None), initialize=1)
 m.Feff = Var(range(6), within=NonNegativeReals, initialize=0.)
-m.Feff[0] = 10
-m.Feff[1] = 30
-m.Feff[2] = 3
-m.Feff[4] = 3
-m.Feff[5] = 5
 m.Feff_sum = Var(bounds=(1, None), initialize=52)
 m.FR = Var(range(6), within=NonNegativeReals, initialize=0.)
 m.Fa = Var(bounds=(1, None), initialize=10)
 m.Fb = Var(bounds=(1, None), initialize=20)
 m.r = Var(range(3), initialize=2.)
 m.x = Var(range(6), initialize=2.)
-m.n = Var(within=NonNegativeReals, initialize=0.2)
+m.n = Var(within=NonNegativeReals, bounds=(0,0.99), initialize=0.2)
 
 # Constraints
 m.c1 = Constraint(expr = m.r[0] == (m.a1 * exp(-120/(m.T))) * m.x[0] * m.x[1] * (m.V) * m.p)
@@ -75,7 +73,7 @@ m.c24 = Constraint(expr = m.FR[4] == (1 - m.n) * (m.Feff[4]))
 m.c25 = Constraint(expr = m.FR[5] == (1 - m.n) * (m.Feff[5]))
 
 # Objective
-m.obj = Objective(expr = -(100 * ((2207 * (m.Fp)) + (50 * (m.Fpurge)) - (168 * (m.Fa)) -(252 * (m.Fb)) - (2.22 * (m.Feff_sum)) - (84 * (m.Fg)) - (60 * (m.V) * m.p)) / (600 * (m.V) * m.p)), sense=minimize)
+m.obj = Objective(expr = (-1) * (100 * ((2207 * (m.Fp)) + (50 * (m.Fpurge)) - (168 * (m.Fa)) -(252 * (m.Fb)) - (2.22 * (m.Feff_sum)) - (84 * (m.Fg)) - (60 * (m.V) * m.p)) / (600 * (m.V) * m.p)), sense=minimize)
 
 # Solver configuration
 solver = SolverFactory('ipopt') 
@@ -83,41 +81,41 @@ solver = SolverFactory('ipopt')
 result = solver.solve(m, tee = True)
 
 print('Optimisation outputs')
-print(m.V.value)
-print(m.T.value)
-print(m.Fp.value)
-print(m.Fpurge.value)
-print(m.Fg.value)
-print(m.Feff_sum.value)
-print(m.Feff[0].value)
-print(m.Feff[1].value)
-print(m.Feff[2].value)
-print(m.Feff[3].value)
-print(m.Feff[4].value)
-print(m.Feff[5].value)
-print(m.FR[0].value)
-print(m.FR[1].value)
-print(m.FR[2].value)
-print(m.FR[3].value)
-print(m.FR[4].value)
-print(m.FR[5].value)
-print(m.Fa.value)
-print(m.Fb.value)
-print(m.r[0].value)
-print(m.r[1].value)
-print(m.r[2].value)
-print(m.x[0].value)
-print(m.x[1].value)
-print(m.x[2].value)
-print(m.x[3].value)
-print(m.x[4].value)
-print(m.x[5].value)
-print(m.n.value)
-print(100 * ((2207 * (m.Fp.value)) + (50 * (m.Fpurge.value)) - (168 * (m.Fa.value)) -(252 * (m.Fb.value)) - (2.22 * (m.Feff[0].value + m.Feff[1].value + m.Feff[2].value + m.Feff[3].value + m.Feff[4].value + m.Feff[5].value)) - (84 * (m.Fg.value)) - (60 * (m.V.value) * m.p.value)) / (600 * (m.V.value) * m.p.value))
+print(f' V: {m.V.value}')
+print(f' T: {m.T.value}')
+print(f' Fp: {m.Fp.value}')
+print(f' Fpurge: {m.Fpurge.value}')
+print(f' Fg: {m.Fg.value}')
+print(f' Feff_sum: {m.Feff_sum.value}')
+print(f' Feff_A: {m.Feff[0].value}')
+print(f' Feff_B: {m.Feff[1].value}')
+print(f' Feff_C: {m.Feff[2].value}')
+print(f' Feff_E: {m.Feff[3].value}')
+print(f' Feff_P: {m.Feff[4].value}')
+print(f' Feff_G: {m.Feff[5].value}')
+print(f' FR_A: {m.FR[0].value}')
+print(f' FR_B: {m.FR[1].value}')
+print(f' FR_C: {m.FR[2].value}')
+print(f' FR_E: {m.FR[3].value}')
+print(f' FR_P: {m.FR[4].value}')
+print(f' FR_G: {m.FR[5].value}')
+print(f' Fa: {m.Fa.value}')
+print(f' Fb: {m.Fb.value}')
+print(f' r1: {m.r[0].value}')
+print(f' r2: {m.r[1].value}')
+print(f' r3: {m.r[2].value}')
+print(f' xA: {m.x[0].value}')
+print(f' xB: {m.x[1].value}')
+print(f' xC: {m.x[2].value}')
+print(f' xE: {m.x[3].value}')
+print(f' xP: {m.x[4].value}')
+print(f' xG: {m.x[5].value}')
+print(f' n: {m.n.value}')
+print(f' ROI: {100 * ((2207 * (m.Fp.value)) + (50 * (m.Fpurge.value)) - (168 * (m.Fa.value)) -(252 * (m.Fb.value)) - (2.22 * (m.Feff[0].value + m.Feff[1].value + m.Feff[2].value + m.Feff[3].value + m.Feff[4].value + m.Feff[5].value)) - (84 * (m.Fg.value)) - (60 * (m.V.value) * m.p.value)) / (600 * (m.V.value) * m.p.value)}')
 
 
 # Scaled / actual values
-print('Optimisation outputs with removed scaling effects')
+print('Optimisation outputs with removed scaling effects in same order as above!')
 print(m.V.value * Scaling_V)
 print(m.T.value * Scaling_temp)
 print(m.Fp.value * Scaling_flows)
